@@ -1,0 +1,73 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-jenkins
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-jenkins
+#          image: jfrog.it-academy.by/public/jenkins-ci:asurgel_32
+          image: {{ .Values.imageName }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-jenkins-secret
+                  key: password
+            - name: JAVA_OPTS
+              value: "-Djenkins.install.runSetupWizard=false"
+            - name: CASC_JENKINS_CONFIG
+              value: /var/jenkins_home/casc_configs/jenkins.yaml
+          ports:
+            - name: http-port
+              containerPort: 8080
+            - name: jnlp-port
+              containerPort: 50000
+          resources:
+            requests:
+              cpu: 2
+              memory: 2Gi
+            limits:
+              cpu: 3
+              memory: 3Gi
+          volumeMounts:
+            - name: jenkins-auth-config
+              mountPath: /var/jenkins_home/init.groovy.d/basic-security.groovy
+              subPath: basic-security.groovy
+            - name: jenkins-config-yaml
+              mountPath: /var/jenkins_home/casc_configs/jenkins.yaml
+              subPath: jenkins.yaml
+            - name: jenkins-test-job
+              mountPath: /var/jenkins_home/jobs/test-job/config.xml
+              subPath: config.xml
+#           - name: jenkins-config
+ #             mountPath: /var/jenkins_home
+      volumes:
+        - name: jenkins-auth-config
+          configMap:
+            name: {{ .Release.Name }}-basic-security
+        - name: jenkins-config-yaml
+          configMap:
+            name: {{ .Release.Name }}-jenkins-config
+        - name: jenkins-test-job
+          configMap:
+            name: {{ .Release.Name }}-test-job
+#        - name: jenkins-config
+#          nfs:
+#            {{- with .Values.nfs }}
+#            server: 192.168.37.105
+#            path: /mnt/IT-Academy/nfs-data/sa2-32-25/asurgel/jenkins
+#             server: {{ .server | default "192.168.37.105" }}
+#             path: {{ .path | default "/mnt/IT-Academy/nfs-data/sa2-32-25/asurgel/jenkins" }}
+#           {{- end }}
