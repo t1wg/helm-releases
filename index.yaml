@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  jenkins:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-08-09T23:57:41.438126762+03:00"
+    description: A Helm chart for Kubernetes
+    digest: 6e102ff4ff4b9a174aac90b2f76f0205ad462450382071072d495f625ae93084
+    name: jenkins
+    type: application
+    urls:
+    - https://t1wg.github.io/helm-releases/helm-releases/jenkins-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-08-09T23:57:41.437281126+03:00"
