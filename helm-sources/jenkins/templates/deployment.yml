@@ -51,8 +51,8 @@ spec:
             - name: jenkins-test-job
               mountPath: /var/jenkins_home/jobs/test-job/config.xml
               subPath: config.xml
-#           - name: jenkins-config
- #             mountPath: /var/jenkins_home
+           - name: jenkins-config
+              mountPath: /var/jenkins_home
       volumes:
         - name: jenkins-auth-config
           configMap:
@@ -63,11 +63,9 @@ spec:
         - name: jenkins-test-job
           configMap:
             name: {{ .Release.Name }}-test-job
-#        - name: jenkins-config
-#          nfs:
-#            {{- with .Values.nfs }}
-#            server: 192.168.37.105
-#            path: /mnt/IT-Academy/nfs-data/sa2-32-25/asurgel/jenkins
-#             server: {{ .server | default "192.168.37.105" }}
-#             path: {{ .path | default "/mnt/IT-Academy/nfs-data/sa2-32-25/asurgel/jenkins" }}
-#           {{- end }}
+        - name: jenkins-config
+          nfs:
+            server: 192.168.37.105
+            path: /mnt/IT-Academy/nfs-data/sa2-32-25/asurgel/jenkins
+             server: "192.168.37.105"
+             path: "/mnt/IT-Academy/nfs-data/sa2-32-25/asurgel/jenkins"
